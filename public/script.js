@@ -24,6 +24,12 @@ document.getElementById('book-form').addEventListener('submit', async (e) => {
     // Display the response message
     const result = await response.json();
     document.getElementById('entry-message').textContent = result.message;
+
+    setTimeout(() => {// Clear the success message after 1 second
+        document.getElementById('entry-message').textContent = '';
+    }, 1000);
+
+    document.getElementById('book-form').reset(); // Clear form fields
 });
 
 // Event listener for search button to search for books
