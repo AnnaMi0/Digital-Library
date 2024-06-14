@@ -33,6 +33,7 @@ db.run(`CREATE TABLE IF NOT EXISTS books (
 )`);
 
 // Routes
+//book search
 app.get('/books/:keyword', (req, res) => {
     const keyword = req.params.keyword;
     db.all(`SELECT * FROM books WHERE title LIKE ?`, [`%${keyword}%`], (err, rows) => {
@@ -44,6 +45,7 @@ app.get('/books/:keyword', (req, res) => {
     });
 });
 
+//show all books
 app.get('/books', (req, res) => {
     db.all('SELECT * FROM books', [], (err, rows) => {
         if (err) {
@@ -54,6 +56,7 @@ app.get('/books', (req, res) => {
     });
 });
 
+//add book
 app.post('/books', (req, res) => {
     const { author, title, genre, price } = req.body;
     db.run(`INSERT INTO books (author, title, genre, price) VALUES (?, ?, ?, ?)`, [author, title, genre, price], function(err) {
