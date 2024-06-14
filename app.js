@@ -7,11 +7,11 @@ const cors = require('cors'); // To handle CORS issues
 const app = express();
 const port = 3000;
 
-// Middleware
-app.use(bodyParser.json());
-app.use(cors()); // Use CORS middleware
+// Middleware setup
+app.use(bodyParser.json()); // Parse JSON bodies
+app.use(cors()); // Enable CORS
 
-// Serve static files
+// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Database setup
@@ -23,7 +23,7 @@ const db = new sqlite3.Database('books.sqlite', (err) => {
     }
 });
 
-// Create table if it doesn't exist
+// Create the "books" table if it doesn't exist
 db.run(`CREATE TABLE IF NOT EXISTS books (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author VARCHAR(25) NOT NULL,
@@ -33,7 +33,8 @@ db.run(`CREATE TABLE IF NOT EXISTS books (
 )`);
 
 // Routes
-//book search
+
+// Route to search for books by keyword
 app.get('/books/:keyword', (req, res) => {
     const keyword = req.params.keyword;
     db.all(`SELECT * FROM books WHERE title LIKE ?`, [`%${keyword}%`], (err, rows) => {
@@ -45,8 +46,8 @@ app.get('/books/:keyword', (req, res) => {
     });
 });
 
-//show all books
-app.get('/books', (req, res) => {
+// Route to fetch all books
+app.get('/viewBooks', (req, res) => {
     db.all('SELECT * FROM books', [], (err, rows) => {
         if (err) {
             res.status(400).json({ error: err.message });
@@ -56,7 +57,7 @@ app.get('/books', (req, res) => {
     });
 });
 
-//add book
+// Route to add a new book
 app.post('/books', (req, res) => {
     const { author, title, genre, price } = req.body;
     db.run(`INSERT INTO books (author, title, genre, price) VALUES (?, ?, ?, ?)`, [author, title, genre, price], function(err) {
@@ -68,7 +69,7 @@ app.post('/books', (req, res) => {
     });
 });
 
-// Start server
+// Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
