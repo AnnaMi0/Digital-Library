@@ -92,6 +92,8 @@ button:hover {
 
 #results, #all-books {
     margin-top: 20px;
+    max-height: 300px; /* Set the maximum height for the book list */
+    overflow-y: auto;  /* Enable vertical scrolling */
 }
 
 #results p, #all-books p {

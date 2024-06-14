@@ -6,7 +6,13 @@ document.getElementById('book-form').addEventListener('submit', async (e) => {
     const author = document.getElementById('author').value;
     const title = document.getElementById('title').value;
     const genre = document.getElementById('genre').value;
-    const price = document.getElementById('price').value;
+    const price = parseFloat(document.getElementById('price').value);
+
+    // Validate the price to ensure it's not negative
+    if (price < 0) {
+        document.getElementById('entry-message').textContent = 'Error: Price cannot be negative';
+        return; // Prevent form submission
+    }
 
     // Send a POST request to the server to add the new book
     const response = await fetch('http://localhost:3000/books', {
@@ -31,6 +37,9 @@ document.getElementById('search-button').addEventListener('click', async () => {
     // Display the search results
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
+    if(books.length === 0){
+        resultsDiv.textContent = 'No Books Found';
+    }
     books.forEach(book => {
         resultsDiv.innerHTML += `<p>${book.title} by ${book.author}, ${book.genre}, $${book.price}</p>`;
     });
