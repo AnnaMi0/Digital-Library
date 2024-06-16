@@ -60,12 +60,26 @@ app.get('/viewBooks', (req, res) => {
 // Route to add a new book
 app.post('/books', (req, res) => {
     const { author, title, genre, price } = req.body;
-    db.run(`INSERT INTO books (author, title, genre, price) VALUES (?, ?, ?, ?)`, [author, title, genre, price], function(err) {
+
+    // Check if the book already exists
+    db.get('SELECT * FROM books WHERE title = ? AND author = ?', [title, author], (err, row) => {
         if (err) {
             res.status(400).json({ error: err.message });
             return;
         }
-        res.json({ message: 'Book added successfully!', id: this.lastID });
+        if (row) {
+            // Book already exists
+            res.status(400).json({ message: 'Book already exists!' });
+        } else {
+            // Insert the new book
+            db.run(`INSERT INTO books (author, title, genre, price) VALUES (?, ?, ?, ?)`, [author, title, genre, price], function(err) {
+                if (err) {
+                    res.status(400).json({ error: err.message });
+                    return;
+                }
+                res.json({ message: 'Book added successfully!', id: this.lastID });
+            });
+        }
     });
 });
 
